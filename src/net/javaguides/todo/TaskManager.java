@@ -8,7 +8,7 @@ public class TaskManager {
     private List <Task> tasks = new ArrayList<>();
     private final String filePath = "tasks.dat";
 
-    public TaskManager{
+    public TaskManager() {
         loadTasks();
     }
 
@@ -18,13 +18,13 @@ public class TaskManager {
     }
 
     public void updateTask(int id, String description, Category category, boolean isCompleted){
-        tasks.stream.filter(task -> task.getId() == id).findFirst()
+        tasks.stream().filter(task -> task.getId() == id).findFirst()
         .ifPresent(task -> {
             task.setDescription(description);
             task.setCategory(category);
             task.setCompleted(isCompleted);
             saveTasks();
-        })
+        });
     }
 
     public void deleteTask(int id){
@@ -37,7 +37,7 @@ public class TaskManager {
     }
 
     private void saveTasks(){
-        try (ObjectOutputStream out  = new ObjectOutputStream(new FileOutPutStream(filePath))) {
+        try (ObjectOutputStream out  = new ObjectOutputStream(new FileOutputStream(filePath))) {
             out.writeObject(tasks);
         } catch (IOException e) {
             System.out.println("Error saving tasks");
@@ -47,7 +47,7 @@ public class TaskManager {
 
     @SuppressWarnings("unchecked")
     private void loadTasks(){
-        try (ObjectInputStream in = new ObjectInputStream(new FileOutPutStream(filePath))) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
             tasks = (List<Task>) in.readObject();
         } catch (FileNotFoundException e) {
             System.out.println("No previous tasks found. Starting fresh.");
