@@ -36,6 +36,11 @@ public class TaskManager {
         tasks.forEach(System.out::println);
     }
 
+    // getter for the gui
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
     private void saveTasks(){
         try (ObjectOutputStream out  = new ObjectOutputStream(new FileOutputStream(filePath))) {
             out.writeObject(tasks);
