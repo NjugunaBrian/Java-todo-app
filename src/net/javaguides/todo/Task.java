@@ -24,9 +24,20 @@ public class Task implements Serializable {
     public boolean isCompleted(){ return isCompleted; }
     public void setCompleted(boolean completed){ isCompleted = completed; }
 
+    // Toggle completion status
+    public void toggleCompletion (){
+        this.isCompleted = !this.isCompleted;
+    }
+
 
     @Override
     public String toString(){
-        return "Task{" + "id=" + id + ", description='" + description + '\'' + ", category=" + category + ", isCompleted=" + isCompleted + '}';
+        String statusIcon = isCompleted ? "✓" : "○";
+        return String.format("%d. %s %s [%s]", id, statusIcon, description, category);
+    }
+
+    // Method to get checkbox part
+    public String getCheckboxDisplay(){
+        return isCompleted ? "✓" : "○";
     }
 }

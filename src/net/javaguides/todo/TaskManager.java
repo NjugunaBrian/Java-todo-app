@@ -27,6 +27,17 @@ public class TaskManager {
         });
     }
 
+    // New Method to toggle task completion
+    public boolean toggleTaskCompletion(int id){
+        return tasks.stream().filter(task -> task.getId() == id).findFirst()
+            .map(task -> {
+                task.toggleCompletion();
+                saveTasks();
+                return task.isCompleted();
+            })
+            .orElse(false);
+    }
+
     public void deleteTask(int id){
         tasks.removeIf(task -> task.getId() == id);
         saveTasks();
