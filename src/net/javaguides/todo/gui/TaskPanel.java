@@ -47,20 +47,33 @@ public class TaskPanel extends JPanel {
     }
 
     private JPanel createTaskPanel(Task task){
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, panel.getPreferredSize().height));
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setPreferredSize(new Dimension(550, 60));
+        panel.setMinimumSize(new Dimension(550, 60));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        panel.setBackground(Color.WHITE);
 
         // Add selection functionality
         panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            BorderFactory.createLineBorder(Color.BLACK, 1), // Thicker black border
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
         
         // Create clickable checkbox
+        String checkboxText = task.getCheckboxDisplay();
         JLabel checkbox = new JLabel(task.getCheckboxDisplay());
-        checkbox.setFont(new Font("Arial", Font.PLAIN, 16));
+        checkbox.setFont(new Font("Arial", Font.BOLD, 16)); //Bigger bold font
+        checkbox.setForeground(Color.BLUE); // Force blue color
         checkbox.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        checkbox.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        checkbox.setPreferredSize(new Dimension(40, 40));
+        checkbox.setMinimumSize(new Dimension(40, 40));
+        checkbox.setOpaque(true);
+        checkbox.setBackground(Color.WHITE);
+        checkbox.setHorizontalAlignment(SwingConstants.CENTER);
+        checkbox.setVerticalAlignment(SwingConstants.CENTER);
+
+        System.out.println("DEBUG: Checkbox text: '" + checkboxText + "'");
 
         // Add click listener to checkbox
         checkbox.addMouseListener(new MouseAdapter(){
@@ -81,21 +94,80 @@ public class TaskPanel extends JPanel {
             }
         });
 
+        // Create main content panel
+        JPanel contentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setOpaque(true);
+
         // Task description
         JLabel taskLabel = new JLabel(String.format("%d. %s [%s]",
             task.getId(), task.getDescription(), task.getCategory()));
+
+        taskLabel.setFont(new Font("Arial", Font.PLAIN, 16)); // Explicit font
+        taskLabel.setForeground(Color.BLACK); // Force black text
+        taskLabel.setOpaque(true);
+        taskLabel.setBackground(Color.WHITE);
         
 
         // Apply strikethrough if completed
         if (task.isCompleted()) {
             taskLabel.setText("<html><strike>" + taskLabel.getText() + "</strike></html>");
+            taskLabel.setForeground(Color.GRAY);
+            
         }  
-        
-        panel.add(checkbox);
-        panel.add(taskLabel);
 
+        // Add test label
+        // JLabel testLabel = new JLabel(" [TEST-" + task.getId() + "] ");
+        // testLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        // testLabel.setForeground(Color.RED);
+        // testLabel.setOpaque(true);
+        // testLabel.setBackground(Color.CYAN);
+        
+        // Add components to content panel
+        contentPanel.add(taskLabel);
+        //contentPanel.add(testLabel);
+
+        // Add selection functionality
+        MouseAdapter selectionListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectTask(panel, task);
+            }
+        };
+        
+        panel.addMouseListener(selectionListener);
+        taskLabel.addMouseListener(selectionListener);
+        contentPanel.addMouseListener(selectionListener);
+
+        // Add components to main panel using BorderLayout
+        panel.add(checkbox, BorderLayout.WEST);
+        panel.add(contentPanel, BorderLayout.CENTER);
+        
         return panel;
 
+    }
+
+    private void selectTask(JPanel panel, Task task){
+        // Clear previous selection
+        for(Component comp: tasksContainer.getComponents()){
+            if (comp instanceof JPanel){
+                comp.setBackground(null);
+                ((JPanel) comp).setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
+                    BorderFactory.createEmptyBorder(5, 5,  5, 5)
+                ));
+            }
+        }
+
+        // Highlight selected panel
+        panel.setBackground(null);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 2),
+            BorderFactory.createEmptyBorder(5, 5,  5, 5)
+        ));
+
+        selectedTask = task;
+        panel.repaint();
     }
 
     private void addTask() {

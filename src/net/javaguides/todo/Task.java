@@ -13,6 +13,7 @@ public class Task implements Serializable {
         this.id = id;
         this.description = description;
         this.category = category;
+
     }
 
     // Getter and Setters
@@ -32,12 +33,15 @@ public class Task implements Serializable {
 
     @Override
     public String toString(){
-        String statusIcon = isCompleted ? "✓" : "○";
-        return String.format("%d. %s %s [%s]", id, statusIcon, description, category);
+        String statusIcon = getCheckboxDisplay();
+        String result = String.format("%d. %s %s [%s]", id, statusIcon, description, category);
+        return result;
+
+        //return "Task{" + "id=" + id + ", description='" + description + '\'' + ", category=" + category + ", isCompleted=" + isCompleted + '}';
     }
 
     // Method to get checkbox part
     public String getCheckboxDisplay(){
-        return isCompleted ? "✓" : "○";
+        return isCompleted ? "[X]" : "[ ]";
     }
 }
